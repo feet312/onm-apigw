@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: onm-apigw
+  profiles:
+    active: local
+  banner: 
+    location: "classpath:app-banner.txt"
