@@ -5,7 +5,7 @@
 server:
   port: 7800
 
-spring:   
+spring: 
   cloud:
     config:
       name: bootstrap
@@ -31,85 +31,6 @@ spring:
             allowedHeaders: '*'
             allow-credentials: true
       routes:
-        - id: order-service
-          uri: lb://ORDER-SERVICE
-          predicates:
-            - Path=/order-service/**
-          filters:
-            - AuthorizationHeaderFilter
-            - RewritePath=/order-service/(?<segment>.*),/$\{segment}
-#            - name: RequestRateLimiter
-#              args:
-#                redis-rate-limiter.replenishRate: 3
-#                redis-rate-limiter.burstCapacity: 3
-#                key-resolver: "#{@tokenKeyResolver}"
-        - id: store-service
-          uri: lb://STORE-SERVICE
-          predicates:
-            - Path=/store-service/**
-          filters:
-            - AuthorizationHeaderFilter
-            - RewritePath=/store-service/(?<segment>.*),/$\{segment}
-#            - name: RequestRateLimiter
-#              args:
-#                redis-rate-limiter.replenishRate: 3
-#                redis-rate-limiter.burstCapacity: 3
-#                key-resolver: "#{@tokenKeyResolver}"
-        - id: notification-service
-          uri: lb://NOTIFICATION-SERVICE
-          predicates:
-            - Path=/notification-service/**
-          filters:
-            - AuthorizationHeaderFilter
-            - RewritePath=/notification-service/(?<segment>.*),/$\{segment}
-
-        - id: user-service
-          uri: lb://USER-SERVICE
-          predicates:
-            - Path=/user-service/login
-            - Method=POST
-          filters:
-            - RewritePath=/user-service/(?<segment>.*),/$\{segment}
-        - id: user-service
-          uri: lb://USER-SERVICE
-          predicates:
-            - Path=/user-service/reissue
-            - Method=GET
-          filters:
-            - RewritePath=/user-service/(?<segment>.*),/$\{segment}
-        - id: user-service
-          uri: lb://USER-SERVICE
-          predicates:
-            - Path=/user-service/logout
-            - Method=POST
-          filters:
-            - RewritePath=/user-service/(?<segment>.*),/$\{segment}
-        - id: user-service
-          uri: lb://USER-SERVICE
-          predicates:
-            - Path=/user-service/auth/reissue
-            - Method=GET
-          filters:
-            - RewritePath=/user-service/(?<segment>.*),/$\{segment}
-        - id: user-service
-          uri: lb://USER-SERVICE
-          predicates:
-            - Path=/user-service/oauth2/authorization/*
-          filters:
-            - RewritePath=/user-service/(?<segment>.*),/$\{segment}
-        - id: user-service
-          uri: lb://USER-SERVICE
-          predicates:
-            - Path=/user-service/*/oauth2/code/*
-          filters:
-            - RewritePath=/user-service/(?<segment>.*),/$\{segment}
-        - id: user-service
-          uri: lb://USER-SERVICE
-          predicates:
-            - Path=/user-service/**
-          filters:
-            - AuthorizationHeaderFilter
-            - RewritePath=/user-service/(?<segment>.*),/$\{segment}
         - id: onm-ba
           uri: http://onm-ba.sksignet.com:9800
           predicates: 
@@ -117,6 +38,19 @@ spring:
           filters:
             - AuthorizationHeaderFilter
             - RewritePath=/onm-ba/(?<segment>/?.*), /$\{segment}
+        - id: onm-auth
+          uri: http://onm-auth.sksignet.com:8800
+          predicates:
+            - Path=/auth/*/authCheck
+          filters:
+            - AuthorizationHeaderFilter
+            - RewritePath=/auth/(?<segment>.*),/$\{segment}
+        - id: onm-auth
+          uri: http://onm-auth.sksignet.com:8800
+          predicates: 
+            - Path=/auth/**
+          filters:
+            - RewritePath=/auth/(?<segment>/?.*), /$\{segment}
 
 token: 
   access-expired-time: 3600000
@@ -125,3 +59,13 @@ token:
   refresh-token-name: refresh-token
   access-token-name: access-token
   
+api: 
+  auth:
+    url: http://onm-auth.sksignet.com:8800/user/authCheck
+
+  
+logging:
+  level:
+    org.springframework.cloud.gateway: info
+    com.sk.sigent: debug
+    root: INFO

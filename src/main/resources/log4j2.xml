@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+	<conversionRule conversionWord="crlf" conversionClass="org.owasp.security.loggin.mask.CRLFConverter" />
+	
+	<Properties>
+		<Property name="logFileName">ONM-APIGW</Property>
+		<!-- 디폴트 로깅시  -->
+		<Property name="consoleLayout">${logFileName} %d{HH:mm:ss.SSS} %-5level %c : -%enc{%msg}{CRLF} %n%throwable</Property>
+		<!-- 로깅 마스킹 -->
+		<Property name="fileLayout">${logFileName} %d{HH:mm:ss.SSS} %-5level %c : -%enc{%msg}{CRLF} %n</Property>
+	</Properties>
+	
+	<Appenders>
+		<Console name="console" target="SYSTEM_OUT">
+			<PatternLayout pattern="${consoleLayout}" />
+		</Console>
+	</Appenders>
+
+	<Loggers>
+		<Logger name="org.springframework.cloud" level="info" additivity="false">
+	      <AppenderRef ref="console"/>
+	    </Logger>
+	    <Logger name="com.sk.signet" level="debug">
+	      <AppenderRef ref="console"/>
+	    </Logger>
+		<root level="debug">
+			<AppenderRef ref="console" />
+		</root>
+	</Loggers>
+</Configuration>
