@@ -35,10 +35,11 @@ public class GlobalFilter extends AbstractGatewayFilterFactory<GlobalFilter.Conf
 	            ServerHttpRequest request = exchange.getRequest(); // reactive포함된거로 import
 	            ServerHttpResponse response = exchange.getResponse();
 
-	            log.info("Global com.example.scg.filter baseMessgae: {}", config.getBaseMessage());
+	            log.info("Global com.sk.signet.onm.apigw.filter baseMessgae: {}", config.getBaseMessage());
 
 	            // Global pre Filter
 	            if (config.isPreLogger()){
+	            	log.debug("Global Filter request Header -> {}", request.getHeaders().get(0));
 	                log.info("Global Filter Start: request id -> {}" , request.getId());
 	                log.info("Global Filter Start: request path -> {}" , request.getPath());
 	            }
