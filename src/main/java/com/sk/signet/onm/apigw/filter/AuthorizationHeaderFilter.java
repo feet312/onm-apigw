@@ -56,6 +56,8 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
 
             // JWT 토큰 판별
             String token = authorizationHeader.replace("Bearer", "");
+            
+            log.info("apigw: AuthorizationHeaderFilter token: " + token);
 
             jwtTokenProvider.validateJwtToken(token);
 

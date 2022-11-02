@@ -31,6 +31,19 @@ spring:
             allowedHeaders: '*'
             allow-credentials: true
       routes:
+        - id: onm-auth
+          uri: http://onm-auth.sksignet.com:8800
+          predicates: 
+            - Path=/auth/*/login
+          filters: 
+            - RewritePath=/auth/(?<segment>/?.*), /$\{segment}
+        - id: onm-auth
+          uri: http://onm-auth.sksignet.com:8800
+          predicates: 
+            - Path=/auth/**
+          filters:
+            - AuthorizationHeaderFilter
+            - RewritePath=/auth/(?<segment>/?.*), /$\{segment}
         - id: onm-ba
           uri: http://onm-ba.sksignet.com:9800
           predicates: 
@@ -38,19 +51,6 @@ spring:
           filters:
             - AuthorizationHeaderFilter
             - RewritePath=/onm-ba/(?<segment>/?.*), /$\{segment}
-        - id: onm-auth
-          uri: http://onm-auth.sksignet.com:8800
-          predicates:
-            - Path=/auth/*/authCheck
-          filters:
-            - AuthorizationHeaderFilter
-            - RewritePath=/auth/(?<segment>.*),/$\{segment}
-        - id: onm-auth
-          uri: http://onm-auth.sksignet.com:8800
-          predicates: 
-            - Path=/auth/**
-          filters:
-            - RewritePath=/auth/(?<segment>/?.*), /$\{segment}
 
 token: 
   access-expired-time: 3600000
