@@ -47,10 +47,10 @@ spring:
         - id: onm-ba
           uri: http://onm-ba.sksignet.com:9800
           predicates: 
-            - Path=/onm-ba/**
+            - Path=/ba/**
           filters:
             - AuthorizationHeaderFilter
-            - RewritePath=/onm-ba/(?<segment>/?.*), /$\{segment}
+            - RewritePath=/ba/(?<segment>/?.*), /$\{segment}
 
 token: 
   access-expired-time: 3600000
