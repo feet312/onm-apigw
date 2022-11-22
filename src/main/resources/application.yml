@@ -5,3 +5,11 @@ spring:
     active: local
   banner: 
     location: "classpath:app-banner.txt"
+    
+    
+## logging
+logging: 
+  level:
+    org.springframework.cloud.gateway: info
+    com.sk.signet: info
+    root: info

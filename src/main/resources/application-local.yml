@@ -13,13 +13,13 @@ spring:
       default-filters:
         - name: GlobalFilter
           args:
-            baseMessage: Spring Cloud Gateway Global Filter
+            baseMessage: SK Signet ONM API Gateway
             preLogger: true
             postLogger: true
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOrigins: "https://onm.sksignet.com:8080"
+            allowedOrigins: "http://onm-fo.sksignet.com:8082"
             allowedMethods:
               - GET
               - POST
@@ -63,9 +63,21 @@ api:
   auth:
     url: http://onm-auth.sksignet.com:8800/user/authCheck
 
-  
-logging:
+## actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    shutdown:
+      enabled: true
+    health:
+      show-details: always
+        
+## logging
+logging: 
   level:
     org.springframework.cloud.gateway: info
-    com.sk.sigent: debug
+    com.sk.signet: debug
     root: INFO

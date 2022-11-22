@@ -6,6 +6,9 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
+import io.netty.channel.ChannelException;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -15,6 +18,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.net.ConnectException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +35,7 @@ import java.util.Map;
  * 2022.10.27 		Heo, Sehwan		1.0				최초 생성
  * -----------------------------------------------------------------
  */
+@Slf4j
 public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
 
 	@Autowired
@@ -49,17 +54,29 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
         if (exceptionClass == ExpiredJwtException.class) {
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
-            responseBody.put("code", "EXPIRED");
-            responseBody.put("message", "Access Token is Expired!");
+            responseBody.put("code", "1101");
+            responseBody.put("message", "인증토큰이 만료되었습니다!");
         } else if (jwtExceptions.contains(exceptionClass)){
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
-            responseBody.put("code", "INVALID");
-            responseBody.put("message", "Invalid Access Token");
+            responseBody.put("code", "1102");
+            responseBody.put("message", "인증토큰이 변조되었습니다!");
+        } else if (exceptionClass == ConnectException.class) {
+        	exchange.getResponse().setStatusCode(exchange.getResponse().getStatusCode());
+            exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
+        	responseBody.put("code", "4000");
+            responseBody.put("message", "서버가 응답이 없습니다. 관리자에게 문의 바랍니다.");
         } else {
             exchange.getResponse().setStatusCode(exchange.getResponse().getStatusCode());
             exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
-            responseBody.put("code", ex.getMessage());
+            responseBody.put("code", "9999");
+            responseBody.put("message", ex.getMessage());
+            if(ex.getMessage().contains("Connection refused")) {
+            	responseBody.put("code", "4000");
+            	responseBody.put("message", "서버가 응답이 없습니다. 관리자에게 문의 바랍니다.");
+            }
+            
+            log.info("msg: {}", ex.getLocalizedMessage());
         }
 
         DataBuffer wrap = null;

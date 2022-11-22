@@ -1,0 +1,138 @@
+####################
+### local 
+####################
+
+server:
+  port: 7800
+
+spring:   
+  cloud:
+    config:
+      name: bootstrap
+    gateway:
+      default-filters:
+        - name: GlobalFilter
+          args:
+            baseMessage: Spring Cloud Gateway Global Filter
+            preLogger: true
+            postLogger: true
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "https://onm.sksignet.com:8080"
+            allowedMethods:
+              - GET
+              - POST
+              - DELETE
+              - PUT
+              - OPTIONS
+              - DELETE
+              - PATCH
+            allowedHeaders: '*'
+            allow-credentials: true
+      routes:
+        - id: onm-ba
+          uri: http://onm-ba.sksignet.com:9800
+          predicates: 
+            - Path=/onm-ba/**
+          filters:
+            - AuthorizationHeaderFilter
+            - RewritePath=/onm-ba/(?<segment>/?.*), /$\{segment}
+
+#        - id: order-service
+#          uri: lb://ORDER-SERVICE
+#          predicates:
+#            - Path=/order-service/**
+#          filters:
+#            - AuthorizationHeaderFilter
+#            - RewritePath=/order-service/(?<segment>.*),/$\{segment}
+#            - name: RequestRateLimiter
+#              args:
+#                redis-rate-limiter.replenishRate: 3
+#                redis-rate-limiter.burstCapacity: 3
+#                key-resolver: "#{@tokenKeyResolver}"
+#        - id: store-service
+#          uri: lb://STORE-SERVICE
+#          predicates:
+#            - Path=/store-service/**
+#          filters:
+#            - AuthorizationHeaderFilter
+#            - RewritePath=/store-service/(?<segment>.*),/$\{segment}
+#            - name: RequestRateLimiter
+#              args:
+#                redis-rate-limiter.replenishRate: 3
+#                redis-rate-limiter.burstCapacity: 3
+#                key-resolver: "#{@tokenKeyResolver}"
+#        - id: notification-service
+#          uri: lb://NOTIFICATION-SERVICE
+#          predicates:
+#            - Path=/notification-service/**
+#          filters:
+#            - AuthorizationHeaderFilter
+#            - RewritePath=/notification-service/(?<segment>.*),/$\{segment}
+#        - id: user-service
+#          uri: lb://USER-SERVICE
+#          predicates:
+#            - Path=/user-service/login
+#            - Method=POST
+#          filters:
+#            - RewritePath=/user-service/(?<segment>.*),/$\{segment}
+#        - id: user-service
+#          uri: lb://USER-SERVICE
+#          predicates:
+#            - Path=/user-service/reissue
+#            - Method=GET
+#          filters:
+#            - RewritePath=/user-service/(?<segment>.*),/$\{segment}
+#        - id: user-service
+#          uri: lb://USER-SERVICE
+#          predicates:
+#            - Path=/user-service/logout
+#            - Method=POST
+#          filters:
+#            - RewritePath=/user-service/(?<segment>.*),/$\{segment}
+#        - id: user-service
+#          uri: lb://USER-SERVICE
+#          predicates:
+#            - Path=/user-service/auth/reissue
+#            - Method=GET
+#          filters:
+#            - RewritePath=/user-service/(?<segment>.*),/$\{segment}
+#        - id: user-service
+#          uri: lb://USER-SERVICE
+#          predicates:
+#            - Path=/user-service/oauth2/authorization/*
+#          filters:
+#            - RewritePath=/user-service/(?<segment>.*),/$\{segment}
+#        - id: user-service
+#          uri: lb://USER-SERVICE
+#          predicates:
+#            - Path=/user-service/*/oauth2/code/*
+#          filters:
+#            - RewritePath=/user-service/(?<segment>.*),/$\{segment}
+#        - id: user-service
+#          uri: lb://USER-SERVICE
+#          predicates:
+#            - Path=/user-service/**
+#          filters:
+#            - AuthorizationHeaderFilter
+#            - RewritePath=/user-service/(?<segment>.*),/$\{segment}
+
+
+token: 
+  access-expired-time: 3600000
+  refresh-expired-time: 604800000
+  secret: "sksignet_onm_service"
+  refresh-token-name: refresh-token
+  access-token-name: access-token
+  
+api: 
+  auth:
+    url: http://onm-auth.sksignet.com:8800
+  
+  
+logging: 
+  level:
+    org.springframework.cloud.gateway: info
+    com.sk.signet: debug
+    root: INFO

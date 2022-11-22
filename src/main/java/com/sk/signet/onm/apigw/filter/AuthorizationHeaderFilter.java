@@ -14,6 +14,12 @@ import lombok.extern.slf4j.Slf4j;
 
 import com.sk.signet.onm.apigw.security.JwtTokenProvider;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
+
 /**
  * 인증 필터 
  * @packagename : com.sk.signet.onm.apigw.filter
@@ -51,13 +57,14 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
             if (!headers.containsKey(HttpHeaders.AUTHORIZATION)) {
                 return onError(exchange, "No authorization header", HttpStatus.UNAUTHORIZED);
             }
+            
 
             String authorizationHeader = headers.get(HttpHeaders.AUTHORIZATION).get(0);
 
             // JWT 토큰 판별
             String token = authorizationHeader.replace("Bearer", "");
             
-            log.info("apigw: AuthorizationHeaderFilter token: " + token);
+            log.debug("apigw: AuthoHeaderFilter token: " + token);
 
             jwtTokenProvider.validateJwtToken(token);
 
@@ -74,7 +81,7 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
 //            }
 
             ServerHttpRequest newRequest = request.mutate()
-                    .header("user-id", subject)
+//                    .header("user-id", subject)
                     .build();
 
             return chain.filter(exchange.mutate().request(newRequest).build());
