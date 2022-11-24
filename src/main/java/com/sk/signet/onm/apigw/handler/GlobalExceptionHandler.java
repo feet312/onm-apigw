@@ -54,25 +54,29 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
         if (exceptionClass == ExpiredJwtException.class) {
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
-            responseBody.put("code", "1101");
+            responseBody.put("code", 2101);
+            responseBody.put("staus", exchange.getResponse().getStatusCode().value());
             responseBody.put("message", "인증토큰이 만료되었습니다!");
         } else if (jwtExceptions.contains(exceptionClass)){
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
-            responseBody.put("code", "1102");
+            responseBody.put("code", 2102);
+            responseBody.put("staus", exchange.getResponse().getStatusCode().value());
             responseBody.put("message", "인증토큰이 변조되었습니다!");
         } else if (exceptionClass == ConnectException.class) {
         	exchange.getResponse().setStatusCode(exchange.getResponse().getStatusCode());
             exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
-        	responseBody.put("code", "4000");
+        	responseBody.put("code", 4000);
+        	responseBody.put("staus", exchange.getResponse().getStatusCode().value());
             responseBody.put("message", "서버가 응답이 없습니다. 관리자에게 문의 바랍니다.");
         } else {
             exchange.getResponse().setStatusCode(exchange.getResponse().getStatusCode());
             exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
-            responseBody.put("code", "9999");
+            responseBody.put("code", 9999);
             responseBody.put("message", ex.getMessage());
             if(ex.getMessage().contains("Connection refused")) {
-            	responseBody.put("code", "4000");
+            	responseBody.put("code", 4000);
+            	responseBody.put("staus", exchange.getResponse().getStatusCode().value());
             	responseBody.put("message", "서버가 응답이 없습니다. 관리자에게 문의 바랍니다.");
             }
             
