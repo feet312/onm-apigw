@@ -63,24 +63,19 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
             responseBody.put("code", 2102);
             responseBody.put("staus", exchange.getResponse().getStatusCode().value());
             responseBody.put("message", "인증토큰이 변조되었습니다!");
-        } else if (exceptionClass == ConnectException.class) {
+        } else if (ex.getCause().getClass() == ConnectException.class) {
         	exchange.getResponse().setStatusCode(exchange.getResponse().getStatusCode());
             exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
         	responseBody.put("code", 4000);
-        	responseBody.put("staus", exchange.getResponse().getStatusCode().value());
+        	responseBody.put("staus", 503);
             responseBody.put("message", "서버가 응답이 없습니다. 관리자에게 문의 바랍니다.");
         } else {
             exchange.getResponse().setStatusCode(exchange.getResponse().getStatusCode());
             exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
             responseBody.put("code", 9999);
+            responseBody.put("staus", exchange.getResponse().getStatusCode().value());
             responseBody.put("message", ex.getMessage());
-            if(ex.getMessage().contains("Connection refused")) {
-            	responseBody.put("code", 4000);
-            	responseBody.put("staus", exchange.getResponse().getStatusCode().value());
-            	responseBody.put("message", "서버가 응답이 없습니다. 관리자에게 문의 바랍니다.");
-            }
-            
-            log.info("msg: {}", ex.getLocalizedMessage());
+            log.error("Unknown exception cause class name : {}", ex.getCause().getClass().getName());
         }
 
         DataBuffer wrap = null;
