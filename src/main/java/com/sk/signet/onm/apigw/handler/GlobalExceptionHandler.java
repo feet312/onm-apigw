@@ -50,7 +50,11 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
                         IllegalArgumentException.class);
         Class<? extends Throwable> exceptionClass = ex.getClass();
 
+        String[] path = exchange.getRequest().getPath().toString().split("/");
+    	log.debug("REQ Service:[{}]", path[1]);
+    	String targetSvc = path[1];
         Map<String, Object> responseBody = new HashMap<>();
+        
         if (exceptionClass == ExpiredJwtException.class) {
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
@@ -68,7 +72,7 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
             exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
         	responseBody.put("code", 4000);
         	responseBody.put("staus", 503);
-            responseBody.put("message", "서버가 응답이 없습니다. 관리자에게 문의 바랍니다.");
+            responseBody.put("message", "요청에 대한 "+targetSvc +" 서비스의 응답이 없습니다. 관리자에게 문의 바랍니다.");
         } else {
             exchange.getResponse().setStatusCode(exchange.getResponse().getStatusCode());
             exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
